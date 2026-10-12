@@ -1,19 +1,22 @@
-import { useRecoilValue } from 'recoil';
-import { filteredTodoListState } from '../selectors/filteredTodoListState';
-import { TodoItem } from './TodoItem';
+import { useTodos } from '../context/TodoContext';
+import TodoItem from './TodoItem';
 
-export function TodoList() {
-  const todoList = useRecoilValue(filteredTodoListState);
+export default function TodoList() {
+  const { todos } = useTodos();
 
-  if (todoList.length === 0) {
-    return <p className="empty-message">Nenhuma tarefa encontrada.</p>;
+  if (todos.length === 0) {
+    return (
+      <p className="text-center text-gray-500 my-8">
+        Nenhuma tarefa encontrada.
+      </p>
+    );
   }
 
   return (
-    <ul className="todo-list">
-      {todoList.map((todo) => (
-        <TodoItem key={todo.id} item={todo} />
+    <div className="space-y-2">
+      {todos.map((todo) => (
+        <TodoItem key={todo.id} todo={todo} />
       ))}
-    </ul>
+    </div>
   );
 }

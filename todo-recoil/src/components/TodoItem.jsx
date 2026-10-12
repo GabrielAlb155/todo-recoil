@@ -1,34 +1,38 @@
-import { useRecoilState } from 'recoil';
-import { todoListState } from '../atoms/todoAtom';
+import { memo } from 'react';
+import { useTodos } from '../context/TodoContext';
 
-export function TodoItem({ item }) {
-  const [todoList, setTodoList] = useRecoilState(todoListState);
-
-  const toggleComplete = () => {
-    const updated = todoList.map((todo) =>
-      todo.id === item.id ? { ...todo, isComplete: !todo.isComplete } : todo
-    );
-    setTodoList(updated);
-  };
-
-  const deleteItem = () => {
-    const updated = todoList.filter((todo) => todo.id !== item.id);
-    setTodoList(updated);
-  };
+const TodoItem = memo(function TodoItem({ todo }) {
+  const { completeTodo, removeTodo } = useTodos();
 
   return (
-    <li className={`todo-item ${item.isComplete ? 'completed' : ''}`}>
-      <div className="todo-item-content">
+    <div className="flex items-center justify-between p-4 mb-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow transition-shadow">
+      <div className="flex items-center gap-3 flex-1 mr-2">
         <input
           type="checkbox"
-          checked={item.isComplete}
-          onChange={toggleComplete}
+          checked={todo.isCompleted}
+          onChange={() => completeTodo(todo.id)}
+          className="w-5 h-5 cursor-pointer accent-blue-600"
         />
-        <span>{item.text}</span>
+        <span
+          className={`text-gray-800 break-all ${
+            todo.isCompleted ? 'line-through text-gray-400' : ''
+          }`}
+        >
+          {todo.text}
+        </span>
+        <span className="text-xs font-semibold bg-blue-50 text-blue-600 px-2.5 py-0.5 rounded-full border border-blue-100">
+          {todo.category}
+        </span>
       </div>
-      <button onClick={deleteItem} className="delete-btn">
-        Remover
+
+      <button
+        onClick={() => removeTodo(todo.id)}
+        className="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded transition-colors"
+      >
+        Excluir
       </button>
-    </li>
+    </div>
   );
-}
+});
+
+export default TodoItem;
